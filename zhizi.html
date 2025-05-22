@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>火锅请柬🔥</title>
+  <style>
+    body {
+      background: #fff5f0;
+      font-family: "Segoe UI", sans-serif;
+      text-align: center;
+      padding: 30px 10px;
+      color: #5a2a00;
+      margin: 0;
+      overflow-x: hidden;
+    }
+    .card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 8px 20px rgba(255, 102, 102, 0.2);
+      display: inline-block;
+      width: 90%;
+      max-width: 420px;
+      animation: fadeIn 1s ease;
+      box-sizing: border-box;
+      border: 2px dashed #ff4d4f;
+    }
+    h1 {
+      color: #d9363e;
+      font-size: 1.6em;
+      margin-bottom: 0.4em;
+    }
+    p {
+      font-size: 15px;
+      margin: 12px 0;
+      line-height: 1.5;
+    }
+    button {
+      font-size: 15px;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin: 10px;
+      transition: all 0.3s ease;
+      width: 100px;
+    }
+    .yes {
+      background-color: #ff4d4f;
+      color: white;
+      position: relative;
+    }
+    .no {
+      background-color: #a9a9a9;
+      color: white;
+    }
+    audio {
+      display: none;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>帅气的许哥 & 幽默的智子 ❤️</h1>
+    <p>听说你俩最近准备手牵手走天下，恩爱非常💞</p>
+    <p><strong>本周六中午11:30，不如暂停私奔计划，我们一起去吃火锅！</strong></p>
+    <p style="color: #555;">地点：黔勐牛贵州酸汤牛肉火锅（江汉路店）</p>
+    <button class="yes" id="yesBtn" onclick="yes()">来啦~</button>
+    <button class="no" onclick="no()">不约</button>
+  </div>
+
+  <audio id="bgm" loop>
+    <source src="https://cdn.pixabay.com/download/audio/2024/02/04/audio_c77a4b83d4.mp3" type="audio/mpeg">
+    您的浏览器不支持音频播放。
+  </audio>
+
+  <script>
+    const btn = document.getElementById("yesBtn");
+    let runCount = 0;
+    const audio = document.getElementById("bgm");
+
+    function yes() {
+      if (runCount < 2) {
+        const maxX = window.innerWidth - btn.offsetWidth - 20;
+        const maxY = window.innerHeight - btn.offsetHeight - 20;
+        const x = Math.random() * maxX;
+        const y = Math.random() * maxY;
+        btn.style.position = "absolute";
+        btn.style.left = x + "px";
+        btn.style.top = y + "px";
+        runCount++;
+      } else {
+        alert("好吧还是没躲过，欢迎两个大灯泡！💡💡 火锅局正式成立！");
+      }
+    }
+
+    function no() {
+      alert("大恩不言谢，多谢好兄弟！🙏");
+    }
+
+    // 微信自动播放兼容
+    document.addEventListener("WeixinJSBridgeReady", function () {
+      audio.play();
+    }, false);
+
+    // 点击任意区域触发播放
+    document.addEventListener("touchstart", () => {
+      audio.play().catch(() => {}); // 避免报错
+    }, { once: true });
+  </script>
+</body>
+</html>

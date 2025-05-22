@@ -9,51 +9,47 @@
       background: #fff5f0;
       font-family: "Segoe UI", sans-serif;
       text-align: center;
-      padding: 30px 20px;
+      padding: 30px 10px;
       color: #5a2a00;
       margin: 0;
       overflow-x: hidden;
-      min-height: 100vh;
-      position: relative;
     }
     .card {
       background: #fff;
       border-radius: 20px;
-      padding: 24px;
+      padding: 20px;
       box-shadow: 0 8px 20px rgba(255, 102, 102, 0.2);
       display: inline-block;
-      max-width: 90vw;
-      width: 420px;
+      width: 90%;
+      max-width: 420px;
       animation: fadeIn 1s ease;
       box-sizing: border-box;
       border: 2px dashed #ff4d4f;
-      position: relative;
     }
     h1 {
       color: #d9363e;
-      font-size: 1.8em;
+      font-size: 1.6em;
       margin-bottom: 0.4em;
     }
     p {
-      font-size: 16px;
-      margin: 14px 0;
+      font-size: 15px;
+      margin: 12px 0;
       line-height: 1.5;
     }
     button {
-      font-size: 16px;
-      padding: 10px 20px;
+      font-size: 15px;
+      padding: 10px 16px;
       border: none;
       border-radius: 10px;
       cursor: pointer;
       margin: 10px;
       transition: all 0.3s ease;
       width: 100px;
-      position: relative;
-      user-select: none;
     }
     .yes {
       background-color: #ff4d4f;
       color: white;
+      position: relative;
     }
     .no {
       background-color: #a9a9a9;
@@ -61,13 +57,6 @@
     }
     audio {
       display: none;
-    }
-    #playHint {
-      color: #d9363e;
-      font-size: 14px;
-      margin-top: 10px;
-      user-select: none;
-      cursor: pointer;
     }
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(20px);}
@@ -83,71 +72,50 @@
     <p style="color: #555;">地点：黔勐牛贵州酸汤牛肉火锅（江汉路店）</p>
     <button class="yes" id="yesBtn" onclick="yes()">来啦~</button>
     <button class="no" onclick="no()">不约</button>
-    <div id="playHint">点一下屏幕，播放背景音乐 🎶</div>
   </div>
 
   <audio id="bgm" loop preload="auto">
-    <source src="https://cdn.pixabay.com/download/audio/2024/02/04/audio_c77a4b83d4.mp3" type="audio/mpeg">
+    <source src="https://你的用户名.github.io/huoguo-invitation/chinese_new_year_festivel_2.mp3" type="audio/mpeg" />
     您的浏览器不支持音频播放。
   </audio>
 
   <script>
-    const audio = document.getElementById("bgm");
-    const yesBtn = document.getElementById("yesBtn");
-    const playHint = document.getElementById("playHint");
+    const btn = document.getElementById("yesBtn");
     let runCount = 0;
-    let audioPlayed = false;
-
-    function playAudio() {
-      if (!audioPlayed) {
-        audio.play().then(() => {
-          audioPlayed = true;
-          playHint.style.display = 'none';
-          // 移除事件监听，避免多次调用
-          document.body.removeEventListener('click', onBodyClick, true);
-        }).catch(() => {
-          alert("播放失败，请再次点击屏幕允许播放音乐哦~");
-        });
-      }
-    }
-
-    function onBodyClick(e) {
-      playAudio();
-    }
+    const audio = document.getElementById("bgm");
 
     function yes() {
-      playAudio();
       if (runCount < 2) {
-        const btnWidth = yesBtn.offsetWidth;
-        const btnHeight = yesBtn.offsetHeight;
-        const maxX = window.innerWidth - btnWidth - 10;
-        const maxY = window.innerHeight - btnHeight - 10;
-
+        const maxX = window.innerWidth - btn.offsetWidth - 20;
+        const maxY = window.innerHeight - btn.offsetHeight - 20;
         const x = Math.random() * maxX;
         const y = Math.random() * maxY;
-
-        yesBtn.style.position = "absolute";
-        yesBtn.style.left = x + "px";
-        yesBtn.style.top = y + "px";
+        btn.style.position = "absolute";
+        btn.style.left = x + "px";
+        btn.style.top = y + "px";
         runCount++;
       } else {
         alert("好吧还是没躲过，欢迎两个大灯泡！💡💡 火锅局正式成立！");
-        yesBtn.style.position = "static";
       }
     }
 
     function no() {
-      playAudio();
-      alert("大恩不言谢，多谢好兄弟成全我的单独时光！🙏");
+      alert("大恩不言谢，多谢好兄弟！🙏");
     }
 
-    // 一开始监听全屏点击事件，确保任何点击都触发音乐播放
-    document.body.addEventListener('click', onBodyClick, true);
-
-    // 微信环境特殊事件
-    document.addEventListener("WeixinJSBridgeReady", function () {
-      audio.play();
+    // 微信浏览器专用事件，JSBridge准备好后尝试播放
+    document.addEventListener("WeixinJSBridgeReady", () => {
+      audio.play().catch(() => {});
     }, false);
+
+    // 监听用户首次触摸或点击，播放音乐且移除监听，防止重复触发
+    function playAudioOnce() {
+      audio.play().catch(() => {});
+      document.removeEventListener("touchstart", playAudioOnce);
+      document.removeEventListener("click", playAudioOnce);
+    }
+    document.addEventListener("touchstart", playAudioOnce, false);
+    document.addEventListener("click", playAudioOnce, false);
   </script>
 </body>
 </html>

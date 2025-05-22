@@ -9,47 +9,51 @@
       background: #fff5f0;
       font-family: "Segoe UI", sans-serif;
       text-align: center;
-      padding: 30px 10px;
+      padding: 30px 20px;
       color: #5a2a00;
       margin: 0;
       overflow-x: hidden;
+      min-height: 100vh;
+      position: relative;
     }
     .card {
       background: #fff;
       border-radius: 20px;
-      padding: 20px;
+      padding: 24px;
       box-shadow: 0 8px 20px rgba(255, 102, 102, 0.2);
       display: inline-block;
-      width: 90%;
-      max-width: 420px;
+      max-width: 90vw;
+      width: 420px;
       animation: fadeIn 1s ease;
       box-sizing: border-box;
       border: 2px dashed #ff4d4f;
+      position: relative;
     }
     h1 {
       color: #d9363e;
-      font-size: 1.6em;
+      font-size: 1.8em;
       margin-bottom: 0.4em;
     }
     p {
-      font-size: 15px;
-      margin: 12px 0;
+      font-size: 16px;
+      margin: 14px 0;
       line-height: 1.5;
     }
     button {
-      font-size: 15px;
-      padding: 10px 16px;
+      font-size: 16px;
+      padding: 10px 20px;
       border: none;
       border-radius: 10px;
       cursor: pointer;
       margin: 10px;
       transition: all 0.3s ease;
       width: 100px;
+      position: relative;
+      user-select: none;
     }
     .yes {
       background-color: #ff4d4f;
       color: white;
-      position: relative;
     }
     .no {
       background-color: #a9a9a9;
@@ -57,6 +61,12 @@
     }
     audio {
       display: none;
+    }
+    #playHint {
+      color: #d9363e;
+      font-size: 14px;
+      margin-top: 10px;
+      user-select: none;
     }
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(20px);}
@@ -72,6 +82,7 @@
     <p style="color: #555;">地点：黔勐牛贵州酸汤牛肉火锅（江汉路店）</p>
     <button class="yes" id="yesBtn" onclick="yes()">来啦~</button>
     <button class="no" onclick="no()">不约</button>
+    <div id="playHint">点一下屏幕，播放背景音乐 🎶</div>
   </div>
 
   <audio id="bgm" loop>
@@ -80,38 +91,58 @@
   </audio>
 
   <script>
-    const btn = document.getElementById("yesBtn");
-    let runCount = 0;
     const audio = document.getElementById("bgm");
+    const yesBtn = document.getElementById("yesBtn");
+    const playHint = document.getElementById("playHint");
+    let runCount = 0;
+    let audioPlayed = false;
+
+    function playAudio() {
+      if (!audioPlayed) {
+        audio.play().then(() => {
+          audioPlayed = true;
+          playHint.style.display = 'none';
+        }).catch(() => {
+          // 播放失败，可能是微信等限制，需要再次点击
+        });
+      }
+    }
 
     function yes() {
+      playAudio();
       if (runCount < 2) {
-        const maxX = window.innerWidth - btn.offsetWidth - 20;
-        const maxY = window.innerHeight - btn.offsetHeight - 20;
+        // 计算安全范围，避免按钮飞出屏幕
+        const btnWidth = yesBtn.offsetWidth;
+        const btnHeight = yesBtn.offsetHeight;
+        const maxX = window.innerWidth - btnWidth - 10;
+        const maxY = window.innerHeight - btnHeight - 10;
+
         const x = Math.random() * maxX;
         const y = Math.random() * maxY;
-        btn.style.position = "absolute";
-        btn.style.left = x + "px";
-        btn.style.top = y + "px";
+
+        yesBtn.style.position = "absolute";
+        yesBtn.style.left = x + "px";
+        yesBtn.style.top = y + "px";
         runCount++;
       } else {
         alert("好吧还是没躲过，欢迎两个大灯泡！💡💡 火锅局正式成立！");
+        // 定位按钮回归中心
+        yesBtn.style.position = "static";
       }
     }
 
     function no() {
-      alert("大恩不言谢，多谢好兄弟！🙏");
+      playAudio();
+      alert("大恩不言谢，多谢好兄弟成全我的单独时光！🙏");
     }
 
-    // 微信自动播放兼容
+    // 页面任意点击触发播放
+    document.body.addEventListener('click', playAudio);
+
+    // 微信环境特殊事件
     document.addEventListener("WeixinJSBridgeReady", function () {
       audio.play();
     }, false);
-
-    // 点击任意区域触发播放
-    document.addEventListener("touchstart", () => {
-      audio.play().catch(() => {}); // 避免报错
-    }, { once: true });
   </script>
 </body>
 </html>

@@ -67,6 +67,7 @@
       font-size: 14px;
       margin-top: 10px;
       user-select: none;
+      cursor: pointer;
     }
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(20px);}
@@ -85,7 +86,7 @@
     <div id="playHint">点一下屏幕，播放背景音乐 🎶</div>
   </div>
 
-  <audio id="bgm" loop>
+  <audio id="bgm" loop preload="auto">
     <source src="https://cdn.pixabay.com/download/audio/2024/02/04/audio_c77a4b83d4.mp3" type="audio/mpeg">
     您的浏览器不支持音频播放。
   </audio>
@@ -102,16 +103,21 @@
         audio.play().then(() => {
           audioPlayed = true;
           playHint.style.display = 'none';
+          // 移除事件监听，避免多次调用
+          document.body.removeEventListener('click', onBodyClick, true);
         }).catch(() => {
-          // 播放失败，可能是微信等限制，需要再次点击
+          alert("播放失败，请再次点击屏幕允许播放音乐哦~");
         });
       }
+    }
+
+    function onBodyClick(e) {
+      playAudio();
     }
 
     function yes() {
       playAudio();
       if (runCount < 2) {
-        // 计算安全范围，避免按钮飞出屏幕
         const btnWidth = yesBtn.offsetWidth;
         const btnHeight = yesBtn.offsetHeight;
         const maxX = window.innerWidth - btnWidth - 10;
@@ -126,7 +132,6 @@
         runCount++;
       } else {
         alert("好吧还是没躲过，欢迎两个大灯泡！💡💡 火锅局正式成立！");
-        // 定位按钮回归中心
         yesBtn.style.position = "static";
       }
     }
@@ -136,8 +141,8 @@
       alert("大恩不言谢，多谢好兄弟成全我的单独时光！🙏");
     }
 
-    // 页面任意点击触发播放
-    document.body.addEventListener('click', playAudio);
+    // 一开始监听全屏点击事件，确保任何点击都触发音乐播放
+    document.body.addEventListener('click', onBodyClick, true);
 
     // 微信环境特殊事件
     document.addEventListener("WeixinJSBridgeReady", function () {
